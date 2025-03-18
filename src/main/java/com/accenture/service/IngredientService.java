@@ -16,4 +16,6 @@ public interface IngredientService {
     List<IngredientResponseDto> trouverTous();
 
     IngredientResponseDto trouver(int id);
+
+    IngredientResponseDto modifier(int id, IngredientRequestDto request);
 }

@@ -69,9 +69,28 @@ public class IngredientControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nom").value("Tomate"))
                 .andExpect(jsonPath("$.quantite").isNumber())
-                .andExpect(jsonPath("$.quantite").value(1));
-
-
+                .andExpect(jsonPath("$.quantite").value(15));
     }
+
+     @Test
+    void testModifier() throws Exception{
+        int id = 1;
+        IngredientRequestDto requestDto = new IngredientRequestDto("Tomate", 15);
+
+         mockMvc.perform(MockMvcRequestBuilders.patch("/ingredients/{id}", id)
+                         .contentType(MediaType.APPLICATION_JSON)
+                         .content(objectMapper.writeValueAsString(requestDto)))
+                 .andExpect(status().isOk())
+                 .andExpect(jsonPath("$.id").value(id))
+                 .andExpect(jsonPath("$.nom").value("Tomate"))
+                 .andExpect(jsonPath("$.quantite").value(15));
+
+
+     }
+
+
+
+
+
 
 }

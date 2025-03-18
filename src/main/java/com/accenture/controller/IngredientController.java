@@ -46,11 +46,13 @@ public class IngredientController {
     ResponseEntity<IngredientResponseDto> trouverIngredient(@PathVariable("id") int id) {
         IngredientResponseDto trouver = service.trouver(id);
         return ResponseEntity.ok(trouver);
-
-
-
     }
 
+    @PatchMapping("/{id}")
+    ResponseEntity<IngredientResponseDto> modifier(@PathVariable("id") int id, @RequestBody IngredientRequestDto ingredientRequestDto){
+        IngredientResponseDto responseDto = service.modifier(id, ingredientRequestDto);
+        return ResponseEntity.ok(responseDto);
+    }
 
 
 }

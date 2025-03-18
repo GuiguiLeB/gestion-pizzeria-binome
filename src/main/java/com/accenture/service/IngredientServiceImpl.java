@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class IngredientServiceImpl implements  IngredientService{
+public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientDao ingredientDao;
 
@@ -23,6 +23,7 @@ public class IngredientServiceImpl implements  IngredientService{
         this.ingredientDao = ingredientDao;
         this.ingredientMapper = ingredientMapper;
     }
+
     @Override
     public IngredientResponseDto ajouter(IngredientRequestDto ingredientRequestDto) throws IngredientException {
         verifierIngredient(ingredientRequestDto);
@@ -38,7 +39,7 @@ public class IngredientServiceImpl implements  IngredientService{
             throw new IngredientException("L'ingrédient doit exister");
         if (ingredientRequestDto.nom() == null || ingredientRequestDto.nom().isBlank())
             throw new IngredientException("Le nom de l'ingrédient ne doit pas être null ou blank");
-        if(ingredientRequestDto.quantite() <0)
+        if (ingredientRequestDto.quantite() < 0)
             throw new IngredientException("L'ingrédient ne peut pas avoir une valeur négative");
     }
 
@@ -52,11 +53,38 @@ public class IngredientServiceImpl implements  IngredientService{
     @Override
     public IngredientResponseDto trouver(int id) {
         Optional<Ingredient> optIngredient = ingredientDao.findById(id);
-        if(optIngredient.isEmpty())
+        if (optIngredient.isEmpty())
             throw new EntityNotFoundException("ingrédient non présent");
         Ingredient ingredient = optIngredient.get();
         return ingredientMapper.toIngredientResponseDto(ingredient);
 
 
     }
+
+    @Override
+    public IngredientResponseDto modifier(int id, IngredientRequestDto request) {
+        // Vérifier que l'ID existe
+        Ingredient ingredient = ingredientDao.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ingrédient non présent"));
+
+        // Mise à jour conditionnelle
+        if (request.nom() != null) {
+            ingredient.setNom(request.nom());
+        }
+        if (request.quantite() != null && request.quantite() >= 0) {
+            ingredient.setQuantite(request.quantite());
+        } else if (request.quantite() != null) {
+            throw new IllegalArgumentException("La quantité ne peut pas être négative");
+        }
+
+        // Sauvegarde en base
+        ingredient = ingredientDao.save(ingredient);
+
+        // Conversion et retour
+        return ingredientMapper.toIngredientResponseDto(ingredient);
+    }
+
+
+
+
 }
